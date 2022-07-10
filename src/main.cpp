@@ -2,7 +2,7 @@
 
 
 int main() {
-    std::initializer_list<int> a = {1, 2, 3};
+    std::initializer_list<int> a = {1, 2, 3, 4, 5};
     s21_list aboba(a);
     // aboba->push_front(5);
 

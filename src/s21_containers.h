@@ -94,15 +94,19 @@ class s21_list {
 
     // }
     ~s21_list() {
-        t_node* tmp = &(this->node_);
-        t_node* tmp2;
-        while (tmp->next_) {
-            tmp2 = tmp->next_;
+        t_node* tmp = this->node_.next_;
+        int flag = false;
+        while (this->node_.next_) {
+            if (flag == false) {
+                flag = true;
+            } else {
+                tmp = tmp->next_;
+            }
             delete tmp;
-            tmp = tmp2;
+            this->node_.next_ = tmp;
         }
         delete tmp;
-        
+        head_ = nullptr;
     }
 
     void get_node_values() {
