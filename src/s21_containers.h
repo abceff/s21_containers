@@ -1,56 +1,108 @@
+#include <stdlib.h>
 
-template <class T>
-class list {
-    using value_type = T;
+#include <cstddef>
+
+class s21_list {
+    using value_type = int;
     using reference = value_type&;
     using const_reference = const value_type&;
-    using iterator = ListIterator<value_type>;
-    using const_iterator = ListConstIterator<T>;
     using size_type = size_t;
 
-    private:
+   private:
+    typedef struct t_node {
         value_type value_;
-        list* next_;
-    public:
-        // Мы должны запретить операцию
-        // присваивания для обычного ConstListIterator
-        class ConstListIterator<value_type> {
-            protected:
-                value_type* ptr_;
-                operator=(const ConstListIterator& other);
-            public:
-                ConstListIterator(value_type* ptr) {
-                    this->ptr = ptr_;
-                }
-                ~ConstListIterator() {
-                    delete ptr_;
-                }
-                value_type& operator*() {
-                    return *ptr_;
-                }
-        };
-        class ListIterator<value_type> : ConstListIterator<value_type> {
-            public:
-                operator=(const_reference other) {
-                    this->ptr_ = other.ptr_;
-                }
-        }
+        struct t_node* next_;
+    } t_node;
+    t_node node_;
 
-        list() {
-            this->next = nullptr;
+   public:
+    // Мы должны запретить операцию
+    // присваивания для обычного ListConstIterator
+    // и разрешить для ListIterator
+    class ListConstIterator {
+       protected:
+        value_type* ptr_;
+        void operator=(const ListConstIterator& other);
+
+       public:
+        ListConstIterator(value_type* ptr) { this->ptr_ = ptr; }
+        ~ListConstIterator() { delete ptr_; }
+        value_type& operator*() { return *ptr_; }
+    };
+    class ListIterator : ListConstIterator {
+       public:
+        void operator=(const_reference other) {
+            this->ptr_ = &(const_cast<value_type&>(other));
         }
-        list(size_type n) {
-            list tmp = *this;
-            for (; n >= 0; n--) {
-                list other();
-                this->next_ = other;
-                this = other;
+    };
+
+    using iterator = ListIterator;
+    using const_iterator = ListConstIterator;
+
+    s21_list() { this->node_.next_ = nullptr; }
+    s21_list(size_type n) {
+        if (n > 0) {
+            t_node tmp;
+            ;
+            for (; n > 0; n--) {
+                t_node other;
+                this->node_.next_ = &other;
+                tmp = this->node_;
+                this->node_ = other;
             }
-            *this = tmp;
+            this->node_ = tmp;
         }
+    }
+    s21_list(std::initializer_list<int> items)
+        : s21_list(static_cast<int>(items.size())) {
+        t_node tmp = this->node_;
+        auto i = items.begin();
+        for (int element : items) {
+            this->node_.value_ = element;
+            if (i != items.end() - 1) {
+                t_node other;
+                this->node_.next_ = &other;
+                this->node_ = other;
+            }
+            i++;
+        }
+        this->node_ = tmp;
+    }
+    // s21_list(const s21_list &l) {
+    //     s21_list* tmp = this;
+    //     s21_list* tmp_l = &l;
+    //     while (l) {
+    //         this->value_ = l.value_;
+    //         if (l.next_) {
+    //             s21_list other();
+    //             this->next_ = &other;
+    //             this = other;
+    //             &l = &l.next_;
+    //         }
+    //     }
+    //     this = tmp;
+    //     &l = tmp_l;
+    // }
+    // s21_list(s21_list &&l) {  конструктор перемещения сделаю потом
 
+    // }
+    ~s21_list() {
+        while (this) {
+        }
+    }
 
+    value_type get_node_value() { return this->node_.value_; }
 
-
-
+    // void pop_front() {
+    //     s21_list node = this->node_;
+    //     this->node_. = this->next_;
+    //     delete *tmp;
+    // }
+    void push_front(const_reference value) {
+        t_node tmp;
+        tmp = this->node_;
+        tmp.value_ = value;
+        tmp.next_ = &(this->node_);
+        this->node_ = tmp;
+    }
 };
