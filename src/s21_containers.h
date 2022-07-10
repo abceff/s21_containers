@@ -1,6 +1,7 @@
 #include <stdlib.h>
-
+#include <initializer_list>
 #include <cstddef>
+#include <iostream>
 
 class s21_list {
     using value_type = int;
@@ -14,6 +15,7 @@ class s21_list {
         struct t_node* next_;
     } t_node;
     t_node node_;
+    t_node* head_;
 
    public:
     // Мы должны запретить операцию
@@ -43,7 +45,6 @@ class s21_list {
     s21_list(size_type n) {
         if (n > 0) {
             t_node tmp;
-            ;
             for (; n > 0; n--) {
                 t_node other;
                 this->node_.next_ = &other;
@@ -53,20 +54,23 @@ class s21_list {
             this->node_ = tmp;
         }
     }
-    s21_list(std::initializer_list<int> items)
-        : s21_list(static_cast<int>(items.size())) {
-        t_node tmp = this->node_;
+    s21_list(std::initializer_list<int> items) {
+        this->head_ = &(this->node_);
+        t_node* tmp = &(this->node_);
         auto i = items.begin();
-        for (int element : items) {
-            this->node_.value_ = element;
+        for (auto element : items) {
+            tmp->value_ = element;
             if (i != items.end() - 1) {
-                t_node other;
-                this->node_.next_ = &other;
-                this->node_ = other;
+                create_new_node(tmp);
             }
             i++;
         }
-        this->node_ = tmp;
+        // this->node_ = *tmp;
+    }
+    void create_new_node(t_node*& tmp) {
+        tmp->next_ = new t_node;
+        tmp = tmp->next_;
+        tmp->next_ = nullptr;
     }
     // s21_list(const s21_list &l) {
     //     s21_list* tmp = this;
@@ -87,11 +91,24 @@ class s21_list {
 
     // }
     ~s21_list() {
-        while (this) {
+        t_node* tmp = &(this->node_);
+        t_node* tmp2;
+        while (this->node_.next_) {
+            tmp2 = tmp->next_;
+            delete tmp;
+            tmp = tmp2;
         }
+        delete tmp;
+        
     }
 
-    value_type get_node_value() { return this->node_.value_; }
+    void get_node_values() {
+        t_node* tmp = head_;
+        while (tmp) {
+            std::cout << tmp->value_ << std::endl;
+            tmp = tmp->next_;
+        }
+    }
 
     // void pop_front() {
     //     s21_list node = this->node_;
