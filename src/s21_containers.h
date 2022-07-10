@@ -3,8 +3,9 @@
 #include <cstddef>
 #include <iostream>
 
+template <class T>
 class s21_list {
-    using value_type = int;
+    using value_type = T;
     using reference = value_type&;
     using const_reference = const value_type&;
     using size_type = size_t;
@@ -57,7 +58,7 @@ class s21_list {
     //         this->node_ = tmp;
     //     }
     // }
-    s21_list(std::initializer_list<int> items) {
+    s21_list(std::initializer_list<value_type> items) {
         this->head_ = &(this->node_);
         t_node* tmp = &(this->node_);
         auto i = items.begin();
