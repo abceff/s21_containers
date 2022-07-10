@@ -41,19 +41,22 @@ class s21_list {
     using iterator = ListIterator;
     using const_iterator = ListConstIterator;
 
-    s21_list() { this->node_.next_ = nullptr; }
-    s21_list(size_type n) {
-        if (n > 0) {
-            t_node tmp;
-            for (; n > 0; n--) {
-                t_node other;
-                this->node_.next_ = &other;
-                tmp = this->node_;
-                this->node_ = other;
-            }
-            this->node_ = tmp;
-        }
+    s21_list() { this->node_.next_ = nullptr;
+        head_ = nullptr;
     }
+    // s21_list(size_type n) {
+    //     head_ = nullptr;
+    //     if (n > 0) {
+    //         t_node tmp;
+    //         for (; n > 0; n--) {
+    //             t_node other;
+    //             this->node_.next_ = &other;
+    //             tmp = this->node_;
+    //             this->node_ = other;
+    //         }
+    //         this->node_ = tmp;
+    //     }
+    // }
     s21_list(std::initializer_list<int> items) {
         this->head_ = &(this->node_);
         t_node* tmp = &(this->node_);
@@ -93,7 +96,7 @@ class s21_list {
     ~s21_list() {
         t_node* tmp = &(this->node_);
         t_node* tmp2;
-        while (this->node_.next_) {
+        while (tmp->next_) {
             tmp2 = tmp->next_;
             delete tmp;
             tmp = tmp2;
