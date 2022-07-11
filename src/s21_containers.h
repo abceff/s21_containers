@@ -17,6 +17,7 @@ class s21_list {
     typedef struct node_t {
         value_type value_;
         struct node_t* next_;
+        struct node_t* prev_;
     } node_t;
     node_t node_;
     node_t* head_;
@@ -26,28 +27,27 @@ class s21_list {
     // присваивания для обычного ListConstIterator
     // и разрешить для ListIterator
     class ListConstIterator {
-        //    private:
-        //     void operator=(const ListConstIterator& other);
-
        protected:
-        value_type* vt_ptr_;
+        node_t* ptr_;
 
        public:
-        ListConstIterator() { vt_ptr_ = nullptr; }
-        ~ListConstIterator() { vt_ptr_ = nullptr; }
-        value_type& operator*() { return *vt_ptr_; }
+        ListConstIterator() { ptr_ = nullptr; }
+        ~ListConstIterator() { ptr_ = nullptr; }
+        node_t* get_ptr() { return ptr_; }
+        value_type& operator*() { return *ptr_; }
     };
     class ListIterator : public ListConstIterator {
        public:
-        ListIterator() { ListConstIterator::vt_ptr_ = nullptr; }
-        ~ListIterator() { ListConstIterator::vt_ptr_ = nullptr; }
-        void operator=(const_reference other) {
-            this->ListConstIterator::vt_ptr_ = &(const_cast<value_type&>(other));
+        ListIterator() { ListConstIterator::ptr_ = nullptr; }
+        ~ListIterator() { ListConstIterator::ptr_ = nullptr; }
+        void operator=(const node_t& node) {
+            this->ListConstIterator::ptr_ = &(const_cast<node_t&>(node));
         }
     };
 
     using s21_iterator = ListIterator;
-    using const_iterator = ListConstIterator;
+    using s21_const_iterator = ListConstIterator;
+    // using get_non_const_ptr = const_cast<s21_const_iterator&>(pos).get_ptr();
 
     // List Functions
     s21_list() {
@@ -55,6 +55,7 @@ class s21_list {
         head_ = nullptr;
     }
     s21_list(size_type n) {
+        this->node_.prev_ = nullptr;
         if (n == 0) {
             this->head_ = nullptr;
         } else {
@@ -66,6 +67,7 @@ class s21_list {
         }
     }
     s21_list(std::initializer_list<value_type> items) {
+        this->node_.prev_ = nullptr;
         if (items.begin() == items.end()) {
             this->head_ = nullptr;
         } else {
@@ -83,6 +85,7 @@ class s21_list {
     }
     void create_new_node(node_t*& tmp) {
         tmp->next_ = new node_t;
+        (tmp->next_)->prev_ = tmp;
         tmp = tmp->next_;
         tmp->next_ = nullptr;
     }
@@ -91,6 +94,7 @@ class s21_list {
     void copy_constructor(const s21_list& l) {
         if (this != &l) {
             this->head_ = &(this->node_);
+            this->node_.prev_ = nullptr;
             node_t* tmp = &(this->node_);
             node_t* l_tmp = l.head_;
             while (l_tmp) {
@@ -131,12 +135,16 @@ class s21_list {
     // List Iterators
     s21_iterator begin() {
         s21_iterator itr;
-        itr = this->front();
+        itr = this->node_;
         return itr;
     }
     s21_iterator end() {
+        node_t* tmp = head_;
+        while (tmp->next_) {
+            tmp = tmp->next_;
+        }
         s21_iterator itr;
-        itr = this->back();
+        itr = *tmp;
         return itr;
     }
 
@@ -172,8 +180,19 @@ class s21_list {
     // s21_iterator insert(s21_iterator pos, const_reference value) {
 
     // }
-    void erase(iterator pos) {
-        
+    void erase(const s21_const_iterator& pos) {
+        if ((const_cast<s21_const_iterator&>(pos).get_ptr())->prev_) {
+            ((const_cast<s21_const_iterator&>(pos).get_ptr())->prev_)->next_ =
+                (const_cast<s21_const_iterator&>(pos).get_ptr())->next_;
+        } else {
+            this->head_ = (const_cast<s21_const_iterator&>(pos).get_ptr())->next_;
+        }
+        if ((const_cast<s21_const_iterator&>(pos).get_ptr())->next_) {
+            ((const_cast<s21_const_iterator&>(pos).get_ptr())->next_)->prev_ =
+                (const_cast<s21_const_iterator&>(pos).get_ptr())->prev_;
+        }
+        if (const_cast<s21_const_iterator&>(pos).get_ptr() != &(this->node_))
+            delete const_cast<s21_const_iterator&>(pos).get_ptr();
     }
 
     void get_node_values() {
