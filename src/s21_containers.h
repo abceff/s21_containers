@@ -45,9 +45,9 @@ class s21_list {
         }
     };
 
-    using s21_iterator = ListIterator;
-    using s21_const_iterator = ListConstIterator;
-    // using get_non_const_ptr = const_cast<s21_const_iterator&>(pos).get_ptr();
+    using iterator = ListIterator;
+    using const_iterator = ListConstIterator;
+    // using get_non_const_ptr = const_cast<const_iterator&>(pos).get_ptr();
 
     // List Functions
     s21_list() {
@@ -133,17 +133,17 @@ class s21_list {
     }
 
     // List Iterators
-    s21_iterator begin() {
-        s21_iterator itr;
+    iterator begin() {
+        iterator itr;
         itr = this->node_;
         return itr;
     }
-    s21_iterator end() {
+    iterator end() {
         node_t* tmp = head_;
         while (tmp->next_) {
             tmp = tmp->next_;
         }
-        s21_iterator itr;
+        iterator itr;
         itr = *tmp;
         return itr;
     }
@@ -177,22 +177,22 @@ class s21_list {
         delete tmp;
         head_ = nullptr;
     }
-    // s21_iterator insert(s21_iterator pos, const_reference value) {
+    // iterator insert(iterator pos, const_reference value) {
 
     // }
-    void erase(const s21_const_iterator& pos) {
-        if ((const_cast<s21_const_iterator&>(pos).get_ptr())->prev_) {
-            ((const_cast<s21_const_iterator&>(pos).get_ptr())->prev_)->next_ =
-                (const_cast<s21_const_iterator&>(pos).get_ptr())->next_;
+    void erase(const const_iterator& pos) {
+        if ((const_cast<const_iterator&>(pos).get_ptr())->prev_) {
+            ((const_cast<const_iterator&>(pos).get_ptr())->prev_)->next_ =
+                (const_cast<const_iterator&>(pos).get_ptr())->next_;
         } else {
-            this->head_ = (const_cast<s21_const_iterator&>(pos).get_ptr())->next_;
+            this->head_ = (const_cast<const_iterator&>(pos).get_ptr())->next_;
         }
-        if ((const_cast<s21_const_iterator&>(pos).get_ptr())->next_) {
-            ((const_cast<s21_const_iterator&>(pos).get_ptr())->next_)->prev_ =
-                (const_cast<s21_const_iterator&>(pos).get_ptr())->prev_;
+        if ((const_cast<const_iterator&>(pos).get_ptr())->next_) {
+            ((const_cast<const_iterator&>(pos).get_ptr())->next_)->prev_ =
+                (const_cast<const_iterator&>(pos).get_ptr())->prev_;
         }
-        if (const_cast<s21_const_iterator&>(pos).get_ptr() != &(this->node_))
-            delete const_cast<s21_const_iterator&>(pos).get_ptr();
+        if (const_cast<const_iterator&>(pos).get_ptr() != &(this->node_))
+            delete const_cast<const_iterator&>(pos).get_ptr();
     }
 
     void get_node_values() {
