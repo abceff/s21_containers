@@ -26,21 +26,27 @@ class s21_list {
     // присваивания для обычного ListConstIterator
     // и разрешить для ListIterator
     class ListConstIterator {
+        //    private:
+        //     void operator=(const ListConstIterator& other);
+
        protected:
         value_type* vt_ptr_;
-        void operator=(const ListConstIterator& other);
 
        public:
+        ListConstIterator() { vt_ptr_ = nullptr; }
+        ~ListConstIterator() { vt_ptr_ = nullptr; }
         value_type& operator*() { return *vt_ptr_; }
     };
-    class ListIterator : ListConstIterator {
+    class ListIterator : public ListConstIterator {
        public:
+        ListIterator() { ListConstIterator::vt_ptr_ = nullptr; }
+        ~ListIterator() { ListConstIterator::vt_ptr_ = nullptr; }
         void operator=(const_reference other) {
-            this->vt_ptr_ = &(const_cast<value_type&>(other));
+            this->ListConstIterator::vt_ptr_ = &(const_cast<value_type&>(other));
         }
     };
 
-    using iterator = ListIterator;
+    using s21_iterator = ListIterator;
     using const_iterator = ListConstIterator;
 
     // List Functions
@@ -123,15 +129,15 @@ class s21_list {
     }
 
     // List Iterators
-    iterator begin() {
-        iterator it();
-        it = front();
-        return it;
+    s21_iterator begin() {
+        s21_iterator itr;
+        itr = this->front();
+        return itr;
     }
-    iterator end() {
-        iterator it();
-        it = back();
-        return back;
+    s21_iterator end() {
+        s21_iterator itr;
+        itr = this->back();
+        return itr;
     }
 
     // List Capacity
@@ -163,20 +169,11 @@ class s21_list {
         delete tmp;
         head_ = nullptr;
     }
-    // iterator insert(iterator pos, const_reference value) {
+    // s21_iterator insert(s21_iterator pos, const_reference value) {
 
     // }
     void erase(iterator pos) {
-        node_t* tmp = head_;
-        node_t* previous_tmp;
-        iterator counter = this->begin;
-        while (counter != pos) {
-            previous_tmp = tmp;
-            tmp = tmp->next_;
-            counter = iterator(tmp);
-        }
-        previous_tmp->next_ = tmp->next_;
-        delete tmp;
+        
     }
 
     void get_node_values() {

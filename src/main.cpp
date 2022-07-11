@@ -6,9 +6,9 @@ int main() {
     s21_list<int> aboba(a);
     // s21_list<int> copy(std::move(a));
     // aboba->push_front(5);
-    aboba.erase(aboba.begin());
+    aboba.begin();
 
-    aboba.get_node_values();
+    // aboba.get_node_values();
 
     return 0;
 }
