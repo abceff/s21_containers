@@ -7,7 +7,9 @@
 
 template <class T>
 class s21_list {
+    //=========================================================================
     // List Member type
+    //=========================================================================
     using value_type = T;
     using reference = value_type&;
     using const_reference = const value_type&;
@@ -34,12 +36,9 @@ class s21_list {
         ListConstIterator() { ptr_ = nullptr; }
         ~ListConstIterator() { ptr_ = nullptr; }
         node_t* get_ptr() { return ptr_; }
-        value_type& operator*() { return *ptr_; }
     };
     class ListIterator : public ListConstIterator {
        public:
-        ListIterator() { ListConstIterator::ptr_ = nullptr; }
-        ~ListIterator() { ListConstIterator::ptr_ = nullptr; }
         void operator=(const node_t& node) {
             this->ListConstIterator::ptr_ = &(const_cast<node_t&>(node));
         }
@@ -47,9 +46,10 @@ class s21_list {
 
     using iterator = ListIterator;
     using const_iterator = ListConstIterator;
-    // using get_non_const_ptr = const_cast<const_iterator&>(pos).get_ptr();
 
+    //=========================================================================
     // List Functions
+    //=========================================================================
     s21_list() {
         this->node_.next_ = nullptr;
         head_ = nullptr;
@@ -122,7 +122,9 @@ class s21_list {
         return *this;
     }
 
+    //=========================================================================
     // List Element access
+    //=========================================================================
     const_reference front() { return this->node_.value_; }
     const_reference back() {
         node_t* tmp = head_;
@@ -148,7 +150,9 @@ class s21_list {
         return itr;
     }
 
+    //=========================================================================
     // List Capacity
+    //=========================================================================
     bool empty() { return !this->head_; }
     size_type size() {
         size_type counter = 0;
@@ -161,7 +165,9 @@ class s21_list {
     }
     size_type max_size() { return SIZE_MAX; }
 
+    //=========================================================================
     // List Modifiers
+    //=========================================================================
     void clear() {
         node_t* tmp = this->node_.next_;
         int flag = false;
@@ -181,18 +187,21 @@ class s21_list {
 
     // }
     void erase(const const_iterator& pos) {
-        if ((const_cast<const_iterator&>(pos).get_ptr())->prev_) {
-            ((const_cast<const_iterator&>(pos).get_ptr())->prev_)->next_ =
-                (const_cast<const_iterator&>(pos).get_ptr())->next_;
-        } else {
-            this->head_ = (const_cast<const_iterator&>(pos).get_ptr())->next_;
+        if (const_cast<const_iterator&>(pos).get_ptr()) {
+            if ((const_cast<const_iterator&>(pos).get_ptr())->prev_) {
+                ((const_cast<const_iterator&>(pos).get_ptr())->prev_)->next_ =
+                    (const_cast<const_iterator&>(pos).get_ptr())->next_;
+            } else {
+                this->head_ =
+                    (const_cast<const_iterator&>(pos).get_ptr())->next_;
+            }
+            if ((const_cast<const_iterator&>(pos).get_ptr())->next_) {
+                ((const_cast<const_iterator&>(pos).get_ptr())->next_)->prev_ =
+                    (const_cast<const_iterator&>(pos).get_ptr())->prev_;
+            }
+            if (const_cast<const_iterator&>(pos).get_ptr() != &(this->node_))
+                delete const_cast<const_iterator&>(pos).get_ptr();
         }
-        if ((const_cast<const_iterator&>(pos).get_ptr())->next_) {
-            ((const_cast<const_iterator&>(pos).get_ptr())->next_)->prev_ =
-                (const_cast<const_iterator&>(pos).get_ptr())->prev_;
-        }
-        if (const_cast<const_iterator&>(pos).get_ptr() != &(this->node_))
-            delete const_cast<const_iterator&>(pos).get_ptr();
     }
 
     void get_node_values() {
