@@ -1,5 +1,4 @@
 #include <iostream>
-#include <cstring>
 
 template <class T>
 class s21_list {
@@ -21,9 +20,6 @@ class s21_list {
     node_t* head_;
 
    public:
-    // Мы должны запретить операцию
-    // присваивания для обычного ListConstIterator
-    // и разрешить для ListIterator
     class ListConstIterator {
        protected:
         node_t* ptr_;
@@ -31,6 +27,13 @@ class s21_list {
        public:
         ListConstIterator() { ptr_ = nullptr; }
         ~ListConstIterator() { ptr_ = nullptr; }
+        const value_type& operator*() { return ptr_->value_; }
+        bool operator==(const ListConstIterator& other) {
+            return ((this->ptr_)->value_ == (other.ptr_)->value_);
+        }
+        bool operator!=(const ListConstIterator& other) {
+            return ((this->ptr_)->value_ != (other.ptr_)->value_);
+        }
         node_t* get_ptr() { return ptr_; }
     };
     class ListIterator : public ListConstIterator {
@@ -38,10 +41,24 @@ class s21_list {
         void operator=(const node_t& node) {
             this->ListConstIterator::ptr_ = &(const_cast<node_t&>(node));
         }
+        void operator++() {
+            if ((this->ListConstIterator::ptr_)->next_) {
+                this->ListConstIterator::ptr_ =
+                    (this->ListConstIterator::ptr_)->next_;
+            }
+        }
+        void operator--() {
+            if ((this->ListConstIterator::ptr_)->prev_) {
+                this->ListConstIterator::ptr_ =
+                    (this->ListConstIterator::ptr_)->prev_;
+            }
+        }
     };
 
     using iterator = ListIterator;
     using const_iterator = ListConstIterator;
+
+
 
     //=========================================================================
     // List Functions
@@ -60,7 +77,7 @@ class s21_list {
             this->head_ = &(this->node_);
             node_t* tmp = &(this->node_);
             for (; n > 0; n--) {
-                create_new_node(tmp);
+                create_empty_node(tmp);
             }
         }
     }
@@ -81,14 +98,21 @@ class s21_list {
             }
         }
     }
-    void create_new_node(node_t*& tmp) {
-        tmp->next_ = new node_t;
-        (tmp->next_)->prev_ = tmp;
-        tmp = tmp->next_;
-        tmp->next_ = nullptr;
-    }
     s21_list(const s21_list& l) { copy_constructor(l); }
-    s21_list(s21_list&& l) { move_constructor(l); }
+    s21_list(s21_list&& l) {
+        if (this != &l) {
+            copy_constructor(l);
+            clear(l);
+        }
+    }
+    ~s21_list() { clear(*this); }
+    const s21_list& operator=(s21_list&& l) {
+        if (this != &l) {
+            copy_constructor(l);
+        }
+        return *this;
+    }
+
     void copy_constructor(const s21_list& l) {
         if (this != &l) {
             this->head_ = &(this->node_);
@@ -97,28 +121,27 @@ class s21_list {
             node_t* l_tmp = l.head_;
             while (l_tmp) {
                 tmp->value_ = l_tmp->value_;
-                tmp->next_ = l_tmp->next_;
                 if (l_tmp->next_) {
                     create_new_node(tmp);
                     l_tmp = l_tmp->next_;
+                } else {
+                    break;
                 }
             }
         }
     }
-    void move_constructor(s21_list&& l) {
-        if (this != &l) {
-            copy_constructor(l);
-            ~s21_list(l);
-        }
+    void create_new_node(node_t*& tmp) {
+        tmp->next_ = new node_t;
+        (tmp->next_)->prev_ = tmp;
+        tmp = tmp->next_;
+        tmp->next_ = nullptr;
     }
-    ~s21_list() { clear(); }
-    const s21_list& operator=(s21_list&& l) {
-        if (this != &l) {
-            ~s21_list();
-            move_constructor(l);
-        }
-        return *this;
+    void create_empty_node(node_t*& tmp) {
+        memset(&(tmp->value_), 0, sizeof(value_type));
+        create_new_node(tmp);
     }
+
+
 
     //=========================================================================
     // List Element access
@@ -132,12 +155,14 @@ class s21_list {
         return tmp->value_;
     }
 
+
+
     //=========================================================================
     // List Iterators
     //=========================================================================
     iterator begin() {
         iterator itr;
-        itr = this->node_;
+        itr = *this->head_;
         return itr;
     }
     iterator end() {
@@ -145,10 +170,12 @@ class s21_list {
         while (tmp->next_) {
             tmp = tmp->next_;
         }
-        iterator itr;
-        itr = *tmp;
+        iterator itr(*tmp);
+        // itr = *tmp;
         return itr;
     }
+
+
 
     //=========================================================================
     // List Capacity
@@ -165,23 +192,25 @@ class s21_list {
     }
     size_type max_size() { return SIZE_MAX; }
 
+
+
     //=========================================================================
     // List Modifiers
     //=========================================================================
-    void clear() {
-        node_t* tmp = this->node_.next_;
+    void clear(s21_list& obj) {
+        node_t* tmp = obj.node_.next_;
         int flag = false;
-        while (this->node_.next_) {
+        while (obj.node_.next_) {
             if (flag == false) {
                 flag = true;
             } else {
                 tmp = tmp->next_;
             }
             delete tmp;
-            this->node_.next_ = tmp;
+            obj.node_.next_ = tmp;
         }
         delete tmp;
-        head_ = nullptr;
+        obj.head_ = nullptr;
     }
     // iterator insert(iterator pos, const_reference value) {
 
@@ -203,24 +232,6 @@ class s21_list {
                 delete const_cast<const_iterator&>(pos).get_ptr();
         }
     }
-
-    void get_node_values() {
-        // node_t* tmp = head_;
-        // while (tmp) {
-        //     std::cout << tmp->value_ << std::endl;
-        //     tmp = tmp->next_;
-        // }
-        std::cout << this->node_.value_ << std::endl;
-    }
-    void get_node_value() {
-        return this->node_.value_;
-    }
-
-    // void pop_front() {
-    //     s21_list node = this->node_;
-    //     this->node_. = this->next_;
-    //     delete *tmp;
-    // }
     void push_front(const_reference value) {
         node_t tmp;
         tmp = this->node_;
