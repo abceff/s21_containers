@@ -1,13 +1,14 @@
 #include "s21_containers.h"
 #include <iostream>
 #include <list>
+#include <cstring>
 
 int main() {
     // std::initializer_list<int> a = {1, 2, 3, 4, 5};
     // s21_list<int> aboba(a);
-    std::list<int> b = {1, 2, 3, 4, 5, 6};
+    // std::list<int> b = {1, 2, 3, 4, 5, 6};
     // std::list<int>::iterator it = b.end();
-    std::cout << b.max_size() << std::endl;
+    // std::cout << b.max_size() << std::endl;
     // s21_list<int> aboba(a);
     // // s21_list<int> copy(std::move(a));
     // // aboba->push_front(5);
@@ -28,7 +29,22 @@ int main() {
     // s21_list<struct example> our;
     // std::list<s21_list<struct example>> orig;
     // // our.get_node_values();
-    // if (memcmp(&(our.front()), &(orig.front()), sizeof(struct example)) == 0) {
+
+
+
+
+
+
+
+
+
+    
+    // s21_list<int> my_list;
+    // std::initializer_list<int> a = {1, 2, 3, 4, 5};
+    // s21_list<int> my_list2(a);
+    // my_list2.clear();
+    // // EXPECT_TRUE(memcmp(&(my_list), &(my_list2), sizeof(s21_list<int>)) == 0);
+    // if (memcmp(&(my_list), &(my_list2), sizeof(s21_list<int>)) == 0) {
     //     std::cout << "области памяти равны" << std::endl;
         
     // } else {

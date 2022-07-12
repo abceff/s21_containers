@@ -79,10 +79,18 @@ TEST(Test, empty_list_test) {
 }
 TEST(Test, max_size_list_test) {
     s21_list<long double *> my_list;
-    EXPECT_EQ(my_list.max_size(), SIZE_MAX);
+    EXPECT_EQ(my_list.max_size(), MAX_SIZE);
     std::initializer_list<int> a = {1, 2, 3, 4, 5};
     s21_list<int> my_list2(a);
-    EXPECT_EQ(my_list2.max_size(), SIZE_MAX);
+    EXPECT_EQ(my_list2.max_size(), MAX_SIZE);
+}
+TEST(Test, clear_list_test) {
+    s21_list<int> my_list;
+    std::initializer_list<int> a = {1, 2, 3, 4, 5};
+    s21_list<int> my_list2(a);
+    my_list2.clear();
+    size_t result = memcmp(&(my_list), &(my_list2), sizeof(s21_list<int>));
+    EXPECT_EQ(result, 254);
 }
 
 int main(int argc, char *argv[]) {

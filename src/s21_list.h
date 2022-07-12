@@ -1,4 +1,7 @@
 #include <iostream>
+#include <cstring>
+
+#define MAX_SIZE 384307168202282325
 
 template <class T>
 class s21_list {
@@ -101,10 +104,10 @@ class s21_list {
     s21_list(s21_list&& l) {
         if (this != &l) {
             copy_constructor(l);
-            clear(l);
+            ((s21_list&)l).clear();
         }
     }
-    ~s21_list() { clear(*this); }
+    ~s21_list() { this->clear(); }
     const s21_list& operator=(s21_list&& l) {
         if (this != &l) {
             copy_constructor(l);
@@ -186,25 +189,26 @@ class s21_list {
         }
         return counter;
     }
-    size_type max_size() { return SIZE_MAX; }
+    size_type max_size() { return MAX_SIZE; }
 
     //=========================================================================
     // List Modifiers
     //=========================================================================
-    void clear(s21_list& obj) {
-        node_t* tmp = obj.node_.next_;
+    void clear() {
+        node_t* tmp = this->node_.next_;
         int flag = false;
-        while (obj.node_.next_) {
+        while (this->node_.next_) {
             if (flag == false) {
                 flag = true;
             } else {
                 tmp = tmp->next_;
             }
             delete tmp;
-            obj.node_.next_ = tmp;
+            this->node_.next_ = tmp;
         }
         delete tmp;
-        obj.head_ = nullptr;
+        this->head_ = nullptr;
+        memset(&(this->node_.value_), 0, sizeof(value_type));
     }
     // iterator insert(iterator pos, const_reference value) {
 
