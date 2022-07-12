@@ -58,15 +58,13 @@ class s21_list {
     using iterator = ListIterator;
     using const_iterator = ListConstIterator;
 
-
-
     //=========================================================================
     // List Functions
     //=========================================================================
     s21_list() {
         this->node_.next_ = nullptr;
         this->node_.prev_ = nullptr;
-        this->head_ = &(this->node_);
+        this->head_ = nullptr;
         memset(&(this->node_.value_), 0, sizeof(value_type));
     }
     s21_list(size_type n) {
@@ -76,7 +74,8 @@ class s21_list {
         } else {
             this->head_ = &(this->node_);
             node_t* tmp = &(this->node_);
-            for (; n > 0; n--) {
+            // 1, так как под 1 элемент память уже выделена
+            for (; n > 1; n--) {
                 create_empty_node(tmp);
             }
         }
@@ -141,8 +140,6 @@ class s21_list {
         create_new_node(tmp);
     }
 
-
-
     //=========================================================================
     // List Element access
     //=========================================================================
@@ -154,8 +151,6 @@ class s21_list {
         }
         return tmp->value_;
     }
-
-
 
     //=========================================================================
     // List Iterators
@@ -170,12 +165,10 @@ class s21_list {
         while (tmp->next_) {
             tmp = tmp->next_;
         }
-        iterator itr(*tmp);
-        // itr = *tmp;
+        iterator itr;
+        itr = *tmp;
         return itr;
     }
-
-
 
     //=========================================================================
     // List Capacity
@@ -183,16 +176,26 @@ class s21_list {
     bool empty() { return !this->head_; }
     size_type size() {
         size_type counter = 0;
-        node_t* tmp = head_;
-        while (tmp->next_) {
-            tmp = tmp->next_;
+        if (this->head_) {
             counter++;
+            node_t* tmp = this->head_;
+            while (tmp->next_) {
+                tmp = tmp->next_;
+                counter++;
+            }
         }
         return counter;
     }
+    // size_type size() {
+    //     iterator itr_begin = this->begin();
+    //     iterator itr_end = this->end();
+    //     size_type counter = 1;
+    //     for (; itr_begin != itr_end; counter++) {
+    //         ++itr_begin;
+    //     }
+    //     return counter;
+    // }
     size_type max_size() { return SIZE_MAX; }
-
-
 
     //=========================================================================
     // List Modifiers
