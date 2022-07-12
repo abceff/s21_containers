@@ -186,15 +186,6 @@ class s21_list {
         }
         return counter;
     }
-    // size_type size() {
-    //     iterator itr_begin = this->begin();
-    //     iterator itr_end = this->end();
-    //     size_type counter = 1;
-    //     for (; itr_begin != itr_end; counter++) {
-    //         ++itr_begin;
-    //     }
-    //     return counter;
-    // }
     size_type max_size() { return SIZE_MAX; }
 
     //=========================================================================

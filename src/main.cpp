@@ -5,9 +5,9 @@
 int main() {
     // std::initializer_list<int> a = {1, 2, 3, 4, 5};
     // s21_list<int> aboba(a);
-    std::list<int> b = {1, 2, 3, 4, 5};
-    std::list<int>::iterator it = b.end();
-    std::cout << *it << std::endl;
+    std::list<int> b = {1, 2, 3, 4, 5, 6};
+    // std::list<int>::iterator it = b.end();
+    std::cout << b.max_size() << std::endl;
     // s21_list<int> aboba(a);
     // // s21_list<int> copy(std::move(a));
     // // aboba->push_front(5);

@@ -78,7 +78,11 @@ TEST(Test, empty_list_test) {
     EXPECT_TRUE(my_list.empty());
 }
 TEST(Test, max_size_list_test) {
-    
+    s21_list<long double *> my_list;
+    EXPECT_EQ(my_list.max_size(), SIZE_MAX);
+    std::initializer_list<int> a = {1, 2, 3, 4, 5};
+    s21_list<int> my_list2(a);
+    EXPECT_EQ(my_list2.max_size(), SIZE_MAX);
 }
 
 int main(int argc, char *argv[]) {
